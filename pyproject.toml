@@ -12,6 +12,7 @@ dependencies = [
     "langchain-community>=0.3.30",
     "langchain-groq>=0.3.8",
     "matplotlib>=3.10.6",
+    "ollama>=0.6.0",
     "pandas>=2.3.2",
     "pymupdf>=1.26.4",
     "scipy>=1.16.2",
