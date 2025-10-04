@@ -1,4 +1,5 @@
 #%%
+import os
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv, find_dotenv
@@ -11,8 +12,8 @@ template_math = "Solve the following math problem: {user_input}, state that you 
 template_music = "Suggest a song for the user: {user_input}, state that you are a music agent"
 template_history = "Provide a history lesson for the user: {user_input}, state that you are a history agent"
 #%%
-model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-embeddings = OpenAIEmbeddings()
+model = ChatOpenAI(model="openai/gpt-oss-120b", temperature=0, base_url="https://api.groq.com/openai/v1", api_key=os.environ.get("GROQ_API_KEY"))
+embeddings = OpenAIEmbeddings(base_url="https://api.groq.com/openai/v1", model="openai/gpt-oss-120b", api_key=os.environ.get("GROQ_API_KEY"))
 # %% Math-Chain
 prompt_math = ChatPromptTemplate.from_messages([
     ("system", template_math),
@@ -34,7 +35,6 @@ prompt_history = ChatPromptTemplate.from_messages([
 chain_history = prompt_history | model | StrOutputParser()
 
 chains = [chain_math , chain_music, chain_history]
-embeddings = OpenAIEmbeddings()
 chain_embeddings = embeddings.embed_documents(["math", "music", "history"])
 
 len(chain_embeddings)
