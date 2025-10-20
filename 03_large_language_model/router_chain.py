@@ -12,8 +12,8 @@ template_math = "Solve the following math problem: {user_input}, state that you 
 template_music = "Suggest a song for the user: {user_input}, state that you are a music agent"
 template_history = "Provide a history lesson for the user: {user_input}, state that you are a history agent"
 #%%
-model = ChatOpenAI(model="openai/gpt-oss-120b", temperature=0, base_url="https://api.groq.com/openai/v1", api_key=os.environ.get("GROQ_API_KEY"))
-embeddings = OpenAIEmbeddings(base_url="https://api.groq.com/openai/v1", model="openai/gpt-oss-120b", api_key=os.environ.get("GROQ_API_KEY"))
+model = ChatOpenAI(model="gemini-2.5-flash", temperature=0, base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=os.environ.get("GEMINI_API_KEY"))
+embeddings = OpenAIEmbeddings(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=os.environ.get("GEMINI_API_KEY"))
 # %% Math-Chain
 prompt_math = ChatPromptTemplate.from_messages([
     ("system", template_math),
