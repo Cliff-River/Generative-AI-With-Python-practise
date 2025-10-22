@@ -2,6 +2,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv, find_dotenv
+from pyperclip import copy 
 
 load_dotenv(find_dotenv())
 
@@ -53,3 +54,6 @@ res = self_consistency_cot(prompt=user_prompt, number_of_runs=5)
 print(res)
 
 # %%
+copy(res)
+
+#%%
