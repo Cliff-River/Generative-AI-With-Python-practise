@@ -1,5 +1,11 @@
+import sys
+import os
 import unittest
-from ..c05_vector_databases.chunking.custom_chunking import custom_spliter
+
+# Add the project root directory to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from c05_vector_databases.chunking.custom_chunking_utils import custom_spliter
 
 class TestCustomSpliter(unittest.TestCase):
     def test_basic_chapter_splitting(self):
@@ -98,11 +104,21 @@ class TestCustomSpliter(unittest.TestCase):
         large_text = "Introduction. This is the introduction." + "".join(chapters)
         result = custom_spliter(large_text)
         self.assertGreaterEqual(len(result), 50)  # At least 50 chunks
-    
+        
     def int_to_roman(self, num):
-        """Helper function to convert integers to Roman numerals for testing"""
-        val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-        syms = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+        """Helper method to convert integer to Roman numeral"""
+        val = [
+            1000, 900, 500, 400,
+            100, 90, 50, 40,
+            10, 9, 5, 4,
+            1
+        ]
+        syms = [
+            "M", "CM", "D", "CD",
+            "C", "XC", "L", "XL",
+            "X", "IX", "V", "IV",
+            "I"
+        ]
         roman_num = ''
         i = 0
         while num > 0:

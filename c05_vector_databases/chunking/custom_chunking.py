@@ -1,8 +1,8 @@
 #%% packages
-import re
 from langchain.document_loaders import GutenbergLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
+from custom_chunking_utils import custom_spliter
 
 load_dotenv(find_dotenv())
 
@@ -19,18 +19,4 @@ loader = GutenbergLoader(book_details["url"])
 docs = loader.load()
 
 #%%
-def custom_spliter(text):
-    """
-    Split text based on Roman numeral chapter headers.
-    
-    Pattern matches newlines followed by Roman numerals (I, II, III, IV, V, etc.)
-    followed by a period and a space, and then a capital letter.
-    
-    Args:
-        text (str): The text to split
-        
-    Returns:
-        list: List of text chunks split by Roman numeral chapter headers
-    """
-    pattern = r'\n(?=[IVX]+\.\s[A-Z])' 
-    return re.split(pattern, text)
+
