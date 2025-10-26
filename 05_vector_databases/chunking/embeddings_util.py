@@ -2,7 +2,7 @@
 免费嵌入模型工具模块
 
 本模块封装了 Hugging Face 免费嵌入模型的使用，
-作为无需 API 密钥的 OpenAIEmbeddings 替代方案。
+作为无需 API 密钥的嵌入模型替代方案。
 """
 
 from langchain_community.embeddings import HuggingFaceEmbeddings
