@@ -4,6 +4,7 @@ from langchain.document_loaders import GutenbergLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
 from custom_chunking_utils import custom_spliter, catch_title
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 load_dotenv(find_dotenv())
 
@@ -34,6 +35,12 @@ books = books[1:]
 
 for book in books:
     title = catch_title(book.page_content)
-    pprint(title)
+    book.metadata["title"] = title
+
+#%%
+spliter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, is_separator_regex=False, length_function=len, 
+    separators=["\n\n", "\n", ".", "!", "?", " "])
+chunks = spliter.split_documents(books)
+len(chunks)
 
 #%%
