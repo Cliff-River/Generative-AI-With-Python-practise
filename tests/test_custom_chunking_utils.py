@@ -5,7 +5,7 @@ import unittest
 # Add the project root directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from c05_vector_databases.chunking.custom_chunking_utils import custom_spliter
+from c05_vector_databases.chunking.custom_chunking_utils import custom_spliter, catch_title
 
 class TestCustomSpliter(unittest.TestCase):
     def test_basic_chapter_splitting(self):
@@ -25,20 +25,20 @@ class TestCustomSpliter(unittest.TestCase):
         self.assertEqual(result[0], "")
         
     def test_no_matches(self):
-        """Test text without chapter markers"""
-        text = "This is a simple text\nwithout any chapter markers\nor special formatting."
+        """Test text without Roman numeral chapter headers"""
+        text = "This is just regular text\nWith multiple lines\nBut no chapter headers"
         result = custom_spliter(text)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], text)
-        
-    def test_single_chapter_marker(self):
-        """Test text with a single chapter marker"""
-        text = "Introduction\n\nI. The First Chapter\nContent of first chapter"
+
+    def test_single_chapter(self):
+        """Test text with a single Roman numeral chapter"""
+        text = "Intro text\n\nI. First Chapter\nChapter content here"
         result = custom_spliter(text)
-        self.assertEqual(len(result), 2)  # Splits at the Roman numeral chapter
-        self.assertIn("Introduction", result[0])
-        self.assertIn("I. The First Chapter", result[1])
-        
+        self.assertEqual(len(result), 2)
+        self.assertIn("Intro text", result[0])
+        self.assertIn("I. First Chapter", result[1])
+
     def test_multiple_chapters(self):
         """Test text with multiple Roman numeral chapters"""
         text = "Intro\n\nI. First\nContent 1\n\nII. Second\nContent 2\n\nIII. Third\nContent 3\n\nIV. Fourth\nContent 4"
@@ -127,6 +127,72 @@ class TestCustomSpliter(unittest.TestCase):
                 num -= val[i]
             i += 1
         return roman_num
+
+class TestCatchTitle(unittest.TestCase):
+    def test_basic_title_capture(self):
+        """Test capturing a title from text with Roman numeral header"""
+        text = "I. THE BEGINNING\r\nThis is the content of the first chapter."
+        result = catch_title(text)
+        self.assertEqual(result, "THE BEGINNING")
+        
+    def test_lowercase_roman_numerals(self):
+        """Test that lowercase Roman numerals are not captured"""
+        text = "i. the beginning\r\nContent here"
+        result = catch_title(text)
+        self.assertIsNone(result)
+        
+    def test_mixed_case_title(self):
+        """Test that titles with mixed case are not captured"""
+        text = "II. The Middle\r\nContent here"
+        result = catch_title(text)
+        self.assertIsNone(result)
+        
+    def test_no_match(self):
+        """Test text that doesn't match the pattern"""
+        text = "This is just regular text\r\nWith no Roman numeral headers"
+        result = catch_title(text)
+        self.assertIsNone(result)
+        
+    def test_empty_text(self):
+        """Test handling of empty text"""
+        text = ""
+        result = catch_title(text)
+        self.assertIsNone(result)
+        
+    def test_complex_title(self):
+        """Test capturing a complex title with spaces and dashes"""
+        text = "V. THE END OF THE STORY - CONCLUSION\r\nFinal chapter content."
+        result = catch_title(text)
+        self.assertEqual(result, "THE END OF THE STORY - CONCLUSION")
+        
+    def test_different_roman_numerals(self):
+        """Test various Roman numeral patterns"""
+        test_cases = [
+            ("I. SINGLE TITLE\r\n", "SINGLE TITLE"),
+            ("V. FIFTH CHAPTER\r\n", "FIFTH CHAPTER"),
+            ("X. TENTH PART\r\n", "TENTH PART"),
+            ("L. FIFTIETH SECTION\r\n", "FIFTIETH SECTION"),
+            ("C. HUNDREDTH CHAPTER\r\n", "HUNDREDTH CHAPTER"),
+            ("D. FIVE HUNDRED\r\n", "FIVE HUNDRED"),
+            ("M. THOUSAND SECTION\r\n", "THOUSAND SECTION"),
+            ("IV. FOURTH TITLE\r\n", "FOURTH TITLE"),
+            ("IX. NINTH CHAPTER\r\n", "NINTH CHAPTER"),
+            ("XL. FORTIETH PART\r\n", "FORTIETH PART"),
+            ("XC. NINETIETH SECTION\r\n", "NINETIETH SECTION"),
+            ("CD. FOUR HUNDRED\r\n", "FOUR HUNDRED"),
+            ("CM. NINE HUNDRED\r\n", "NINE HUNDRED"),
+        ]
+        
+        for text, expected in test_cases:
+            with self.subTest(text=text):
+                result = catch_title(text)
+                self.assertEqual(result, expected)
+                
+    def test_partial_match(self):
+        """Test that partial matches don't interfere"""
+        text = "This is some text with I. in the middle but not at the beginning\r\n"
+        result = catch_title(text)
+        self.assertIsNone(result)
 
 if __name__ == '__main__':
     unittest.main()
