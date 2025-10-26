@@ -1,3 +1,4 @@
+#%%
 import re
 
 def custom_spliter(text):
@@ -15,3 +16,13 @@ def custom_spliter(text):
     """
     pattern = r'\n(?=[IVX]+\.\s[A-Z])' 
     return re.split(pattern, text)
+
+def catch_title(text):
+    pattern = r'\b[IVXLCDM]+\.\s+([A-Z\s\-]+?)\r\n'
+    match = re.match(pattern, text)
+    if match: 
+        return match.group(1)
+    else:
+        return None
+    
+#%%
