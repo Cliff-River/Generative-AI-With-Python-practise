@@ -1,5 +1,4 @@
 #%% packages
-from pprint import pprint
 from langchain.document_loaders import GutenbergLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
