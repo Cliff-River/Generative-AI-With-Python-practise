@@ -3,6 +3,7 @@
 ## Project Snapshot
 - Course-style playground for generative AI recipes; each `c0X_` folder is a standalone demo (pretrained models, LLM orchestration, prompt engineering, vector DB prep).
 - Python 3.11+ targeted via `pyproject.toml`; local `.python-version` pins 3.13 for uv/pyenv consistency.
+- Uses `uv` for Python virtual environment and dependency management.
 - Dependencies center on `langchain`, `transformers`, Hugging Face loaders, and multiple hosted LLM providers (OpenAI, Groq, Gemini, Ollama, etc.).
 
 ## Environment & Secrets
@@ -17,7 +18,7 @@
 - `miscellany/agent_write_md.py` wires a LangChain ReAct agent with a local tool that overwrites `story.md`. Follow this pattern when adding new agents/tools: define tool, register in `Tool(...)`, then compose with `AgentExecutor`.
 
 ## Testing & Quality
-- Only automated suite today is `tests/test_custom_chunking_utils.py`; it uses `pytest` to discover `unittest` cases. Run with `python -m pytest` from repo root so `sys.path` insertion stays valid.
+- The project uses `pytest` to discover `unittest` cases. Run with `uv run pytest` from repo root so `sys.path` insertion stays valid.
 - The tests enforce very specific Roman numeral splitting and carriage-return handling (`\r\n`). When modifying regexes, mirror those expectations and expand test coverage rather than relaxing assertions.
 - For new utility modules, prefer placing cases in `tests/` using the same pattern (manual `sys.path` injection) until packaging is formalized.
 
@@ -28,6 +29,6 @@
 - When adding long-running or I/O heavy operations, gate them behind `if __name__ == "__main__"` so imports stay lightweight for other notebooks.
 
 ## Handy Commands
-- Install deps with `uv sync` (preferred) or `pip install -e .` if uv is unavailable.
-- Run tests via `python -m pytest`.
+- Install deps with `uv add` (preferred) or `uv sync` or `pip install -e .` if uv is unavailable.
+- Run tests via `uv run pytest`.
 - For quick linting, `python -m compileall` works without extra tooling; no dedicated formatter is configured, so stick to PEP 8 and existing style.
