@@ -80,18 +80,21 @@ plt.scatter(df_arithmetic['x'], df_arithmetic['y'], marker="o")
 plt.arrow(df_arithmetic['x'][0], df_arithmetic['y'][0],
             df_arithmetic['x'][2] - df_arithmetic['x'][0],
             df_arithmetic['y'][2] - df_arithmetic['y'][0],
-            head_width=0.01, head_length=0.01, fc='r', ec='r')
+            head_width=0.04, head_length=0.04, fc='r', ec='r')
 plt.arrow(df_arithmetic['x'][3], df_arithmetic['y'][3],
             df_arithmetic['x'][1] - df_arithmetic['x'][3],
             df_arithmetic['y'][1] - df_arithmetic['y'][3],
-            head_width=0.01, head_length=0.01, fc='r', ec='r')
+            head_width=0.04, head_length=0.04, fc='r', ec='r')
 plt.arrow(df_arithmetic['x'][4], df_arithmetic['y'][4],
             df_arithmetic['x'][5] - df_arithmetic['x'][4],
             df_arithmetic['y'][5] - df_arithmetic['y'][4],
-            head_width=0.01, head_length=0.01, fc='r', ec='r')
+            head_width=0.04, head_length=0.04, fc='r', ec='r')
 
 # Add labels for words
 for i, word in enumerate(df_arithmetic['word']):
     plt.annotate(word, (df_arithmetic['x'][i]+0.01, df_arithmetic['y'][i]+0.01))
+
+#%% Pairs - France + Germany = ??
+word_vectors.most_similar(positive=['paris', 'germany'], negative=['france'], topn=1)
 
 #%%
