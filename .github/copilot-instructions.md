@@ -1,5 +1,8 @@
 # Copilot Instructions
 
+# Project Overview
+This project is a practice following a tutorial series on building generative AI applications using Python. It includes various demos and experiments showcasing prompt engineering, LLM orchestration, vector databases, and more.
+
 ## Project Snapshot
 - Course-style playground for generative AI recipes; each `c0X_` folder is a standalone demo (pretrained models, LLM orchestration, prompt engineering, vector DB prep).
 - Python 3.11+ targeted via `pyproject.toml`; local `.python-version` pins 3.13 for uv/pyenv consistency.
