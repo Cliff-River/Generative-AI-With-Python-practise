@@ -24,10 +24,7 @@ embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-M
 db_path = os.path.join(os.path.abspath(__file__), "..", "..", "db")
 chroma_db = Chroma.from_documents(documents=chunks, embedding=embeddings_model, collection_name="hound_of_baskerville_db")
 
-#%%
-chroma_db.add_documents(documents=chunks)
-
 #%% Get data from database
-chroma_db.get()["ids"]
+len(chroma_db.get()["ids"])
 
 #%%
