@@ -24,6 +24,7 @@ This project is a practice following a tutorial series on building generative AI
 - The project uses `pytest` to discover `unittest` cases. Run with `uv run pytest` from repo root so `sys.path` insertion stays valid.
 - The tests enforce very specific Roman numeral splitting and carriage-return handling (`\r\n`). When modifying regexes, mirror those expectations and expand test coverage rather than relaxing assertions.
 - For new utility modules, prefer placing cases in `tests/` using the same pattern (manual `sys.path` injection) until packaging is formalized.
+- The structure of tests directory mirrors the main codebase for easy navigation.
 
 ## Collaboration Tips
 - Favor isolated scripts per experiment; match folder conventions (`c0X_topic/feature.py`).
