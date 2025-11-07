@@ -3,7 +3,7 @@ import os
 import unittest
 
 # Add the project root directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 from c05_vector_databases.chunking.custom_chunking_utils import custom_spliter, catch_title
 
