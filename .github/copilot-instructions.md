@@ -35,3 +35,6 @@ This project is a practice following a tutorial series on building generative AI
 - Install deps with `uv add` (preferred) or `uv sync` or `pip install -e .` if uv is unavailable.
 - Run tests via `uv run pytest`.
 - For quick linting, `python -m compileall` works without extra tooling; no dedicated formatter is configured, so stick to PEP 8 and existing style.
+
+## Version Control
+- Generate a meaningful commit message summarizing changes for committing.
