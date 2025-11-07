@@ -49,3 +49,5 @@ index.upsert(vectors)
 
 # %%
 print(index.describe_index_stats())
+
+#%%
