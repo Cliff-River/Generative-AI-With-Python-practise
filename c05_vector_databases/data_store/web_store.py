@@ -2,6 +2,7 @@
 from dotenv import load_dotenv, find_dotenv
 import os
 from pinecone import Pinecone, ServerlessSpec
+from data_prep import create_chunks
 
 load_dotenv(find_dotenv())
 
@@ -23,5 +24,9 @@ if index_name not in pc.list_indexes().names():
             region="us-east-1",
         ),
     )
+
+#%% Split chunks from text file
+chunks = create_chunks("HoundOfBaskerville.txt")
+texts = [chunk.page_content for chunk in chunks]
 
 #%%
