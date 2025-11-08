@@ -19,6 +19,10 @@ The project follows a modular course-style structure:
 - Dependencies center on `langchain`, `transformers`, Hugging Face loaders, and multiple hosted LLM providers (OpenAI, Groq, Gemini, Ollama, etc.)
 - GPU-accelerated libraries (`torch`, `diffusers`, `tensorflow`) are optional and loaded lazily to avoid heavy downloads
 
+# Development Conventions
+- Use `# %%` to split code cells in notebooks for step-by-step execution
+- Use `# %% [markdown]` to add explanatory comments or markdown blocks
+
 ## Environment & Secrets
 - Nearly every script expects `.env` values; common keys include:
   - `OPENAI_API_KEY` for OpenAI GPT models
