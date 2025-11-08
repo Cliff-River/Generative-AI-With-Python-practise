@@ -39,7 +39,10 @@ vectors = [
     {
         "id": f"vec{i}",
         "values": embedding,
-        "metadata": chunks[i].metadata
+        "metadata": {
+            **chunks[i].metadata,  # Include original metadata
+            "text": chunks[i].page_content  # Add the text content to metadata
+        }
     } for i, embedding in enumerate(embeddings)
 ]
 
