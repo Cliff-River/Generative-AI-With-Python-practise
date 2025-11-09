@@ -8,7 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 # %% function to prepare data
 # Initialize embeddings model
-def prepare_data():
+def prepare_data() -> Chroma:
     """
     Prepare data for the movie database.
     This function initializes the embeddings model, creates a Chroma instance,
