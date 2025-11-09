@@ -66,4 +66,12 @@ def create_database(vector_store : Chroma):
     # Add documents to the existing vector store
     vector_store.add_documents(documents=chunks)
 
-# %%
+# %% function to get all genras from vector store
+def get_all_genres(vector_store : Chroma) -> set:
+    """
+    Get all unique genres from the vector store.
+    """
+    genres = set()
+    for metadata in vector_store.get()["metadatas"]:
+        genres.update(metadata["genre"].split("; "))
+    return genres
