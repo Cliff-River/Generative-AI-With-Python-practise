@@ -9,16 +9,25 @@ from langchain.embeddings import HuggingFaceEmbeddings
 # %% function to prepare data
 # Initialize embeddings model
 def prepare_data():
+    """
+    Prepare data for the movie database.
+    This function initializes the embeddings model, creates a Chroma instance,
+    and either loads an existing database or creates a new one if it doesn't exist.
+    """
     embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     vector_store : Chroma = None
     db_path = os.path.join(os.path.abspath(__file__), "..", "db")
     def create_chroma_instance():
+        """
+        Create a Chroma instance with the specified embedding model and database path.
+        """
         vector_store = Chroma(
             embedding_function=embedding_model,
             persist_directory=db_path,
             collection_name="movies",
         )
         return vector_store
+    # Check if the database already exists
     if os.path.exists(db_path):
         vector_store = create_chroma_instance()
     else:
