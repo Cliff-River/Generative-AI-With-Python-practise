@@ -44,16 +44,17 @@ def create_database(vector_store : Chroma):
                 "imdb_rating": item["imdb"]["rating"] if item["imdb"]["rating"] is not None else ""
             }
         ))
-        #  Split documents into chunks
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200,
-            separators=["\n\n", "\n", ".", ",", " ", ""],
-        )
-        chunks = text_splitter.split_documents(docs)
+    
+    #  Split documents into chunks
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        separators=["\n\n", "\n", ".", ",", " ", ""],
+    )
+    chunks = text_splitter.split_documents(docs)
 
-        # Store embeddings into Chroma DB
-        # Add documents to the existing vector store
-        vector_store.add_documents(documents=chunks)
+    # Store embeddings into Chroma DB
+    # Add documents to the existing vector store
+    vector_store.add_documents(documents=chunks)
 
 # %%
