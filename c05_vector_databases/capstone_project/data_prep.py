@@ -5,6 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
+from pprint import pprint
 
 # %% function to prepare data
 # Initialize embeddings model
@@ -49,7 +50,7 @@ def create_database(vector_store : Chroma):
             metadata={
                 "title": item["title"] if item["title"] is not None else "",
                 "poster": item["poster"] if item["poster"] is not None else "",
-                "genre": "; ".join(item["genres"]) if item["genres"] is not None else "",
+                "genres": "; ".join(item["genres"]) if item["genres"] is not None else "",
                 "imdb_rating": item["imdb"]["rating"] if item["imdb"]["rating"] is not None else ""
             }
         ))
@@ -73,5 +74,19 @@ def get_all_genres(vector_store : Chroma) -> set:
     """
     genres = set()
     for metadata in vector_store.get()["metadatas"]:
-        genres.update(metadata["genre"].split("; "))
+        genres.update(metadata["genres"].split("; "))
     return genres
+
+# %% Just for testing the functionality of this module
+if __name__ == "__main__":
+    vector_store = prepare_data()
+    genres = get_all_genres(vector_store)
+    print(genres)
+    
+    num_ratings = 8.0
+    user_query = "A movie about a group of friends who go on a trip"
+    metadata_filter = { "imdb_rating": {"$gte": num_ratings} }
+    similar_movies = vector_store.similarity_search_with_score(user_query, k=100, filter=metadata_filter)
+    pprint(similar_movies[:10])
+
+# %%
