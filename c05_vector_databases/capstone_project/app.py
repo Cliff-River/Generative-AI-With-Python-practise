@@ -32,9 +32,9 @@ num_ratings = st.sidebar.slider("Minimum IMDB Rating", min_value=0.0, max_value=
 st.sidebar.caption(f"Showing movies with rating ≥ {num_ratings}")
 
 # A selectbox to select the genre
-genres = ["all"] + sorted(list(get_all_genres(vector_store)))
+genres = ["[ ALL ]"] + sorted(list(get_all_genres(vector_store)))
 selected_genre = st.sidebar.selectbox("Select Genre", options=genres)
-if selected_genre != "all":
+if selected_genre != "[ ALL ]":
     st.sidebar.caption(f"Filtering by: {selected_genre}")
 
 # Number of results to show
@@ -62,7 +62,7 @@ if user_query and search_button:
         similar_movies = vector_store.similarity_search_with_score(user_query, k=100, filter=metadata_filter)
         
         # Further filter by genre if selected
-        if selected_genre != "all":
+        if selected_genre != "[ ALL ]":
             similar_movies = [movie for movie in similar_movies if selected_genre in movie[0].metadata["genres"]]
 
     st.header("🎯 Most Similar Movies")
@@ -192,4 +192,3 @@ st.markdown(
     "</div>", 
     unsafe_allow_html=True
 )
-    
