@@ -2,7 +2,7 @@
 Fetch documents about 'Human History' from Wikipedia and set up a simple Retrieval-Augmented Generation (RAG) pipeline using LangChain and Groq AI.
 """
 
-# %%
+# %% packages
 from langchain.document_loaders import WikipediaLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
@@ -20,7 +20,14 @@ embeddings = OpenAIEmbeddings(
 )
 
 # Check if rag_store directory exists
-if not os.path.exists("rag_store"):
+if os.path.exists("rag_store"):
+    print("Loading existing vector store...")
+    vectorstore = Chroma(
+        persist_directory="rag_store",
+        embedding_function=embeddings
+    )
+    print("Vector store loaded successfully")
+else:
     print("Creating vector store...")
     
     # Load Wikipedia documents about 'Human History'
@@ -47,12 +54,5 @@ if not os.path.exists("rag_store"):
     )
     vectorstore.persist()
     print("Vector store created and persisted")
-else:
-    print("Loading existing vector store...")
-    vectorstore = Chroma(
-        persist_directory="rag_store",
-        embedding_function=embeddings
-    )
-    print("Vector store loaded successfully")
 
-# %%
+# %% The vector store is now ready for use in a RAG pipeline.
