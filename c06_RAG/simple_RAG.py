@@ -93,4 +93,11 @@ response = chain.invoke({
 })
 print(response)
 
+# %%# Test with another question
+response = chain.invoke({
+    "context": context,
+    "question": "What is cosine similarity?"
+})
+print(response)
+
 # %%
