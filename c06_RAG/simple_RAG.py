@@ -10,9 +10,10 @@ import os
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv, find_dotenv
 from langchain.prompts import ChatPromptTemplate
+from langchain.schema import BaseRetriever
 from langchain_groq import ChatGroq
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
-
 
 load_dotenv(find_dotenv())
 
@@ -99,5 +100,53 @@ response = chain.invoke({
     "question": "What is cosine similarity?"
 })
 print(response)
+
+# %% boudle RAG process as a function
+def simple_RAG(question: str, retriever: BaseRetriever, chat_model: BaseChatModel) -> str:
+    """
+    Execute a simple RAG pipeline: retrieve relevant documents and generate an answer.
+    
+    Args:
+        question: The user's question
+        retriever: LangChain retriever for document search
+        chat_model: LLM chat model for answer generation
+        
+    Returns:
+        Generated answer based on retrieved context
+    """
+    # Retrieve relevant documents
+    relevant_docs = retriever.get_relevant_documents(question)
+    
+    # Build context from retrieved documents
+    context = "\n".join([doc.page_content for doc in relevant_docs])
+    
+    # Create prompt template
+    prompt_template = ChatPromptTemplate.from_messages([
+        ("system", """
+         You are an AI assistant that answers questions about the history of human civilization. You are given a question and a list of documents and need to answer the question. Answer the question only based on the provided documents. These documents can help you answer the question: 
+         <context>
+            {context}
+         </context>
+         If you don't know the answer, just say you don't know or say 'Sorry, I don't know the answer to this question.'. Do not try to make up an answer.
+         """),
+        ("human", "{question}")
+    ])
+    
+    # Create chain and invoke
+    chain = prompt_template | chat_model | StrOutputParser()
+    response = chain.invoke({
+        "context": context,
+        "question": question
+    })
+    
+    return response
+
+# %% Example usage
+answer = simple_RAG(question, retriever, chat_model)
+print(answer)
+
+# %% Test with another question
+answer2 = simple_RAG("What is cosine similarity?", retriever, chat_model)
+print(answer2)
 
 # %%
