@@ -9,6 +9,7 @@ from langchain.vectorstores import Chroma
 import os
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv, find_dotenv
+from langchain.prompts import ChatPromptTemplate
 
 load_dotenv(find_dotenv())
 
@@ -63,5 +64,18 @@ retriever = vectorstore.as_retriever(
 )
 relevant_docs = retriever.get_relevant_documents("What happened in the first world war?")
 [doc.page_content[:100] for doc in relevant_docs]
+
+# %% prompt engineering
+context = "\n".join([doc.page_content for doc in relevant_docs])
+ChatPromptTemplate.from_template([
+    ("system", """
+     You are an AI assistant that answers questions about the history of human civilization. You are given a question and a list of documents and need to answer the question. Ansser the question only based on the provided documents. These document can help you answer the question: 
+     <context>
+        {context}
+     </context>
+     If you don't know the answer, just say you don't know or say 'Sorry, I don't know the answer to this question.'. Do not try to make up an answer.
+     """),
+    ("human", "{question}")
+])
 
 # %%
