@@ -10,6 +10,9 @@ import os
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv, find_dotenv
 from langchain.prompts import ChatPromptTemplate
+from langchain_groq import ChatGroq
+from langchain_core.output_parsers import StrOutputParser
+
 
 load_dotenv(find_dotenv())
 
@@ -62,12 +65,13 @@ retriever = vectorstore.as_retriever(
     search_type="similarity",
     search_kwargs={"k": 3}
 )
-relevant_docs = retriever.get_relevant_documents("What happened in the first world war?")
+question = "What happened in the first world war?"
+relevant_docs = retriever.get_relevant_documents(question)
 [doc.page_content[:100] for doc in relevant_docs]
 
 # %% prompt engineering
 context = "\n".join([doc.page_content for doc in relevant_docs])
-ChatPromptTemplate.from_template([
+prompt_template = ChatPromptTemplate.from_messages([
     ("system", """
      You are an AI assistant that answers questions about the history of human civilization. You are given a question and a list of documents and need to answer the question. Ansser the question only based on the provided documents. These document can help you answer the question: 
      <context>
@@ -77,5 +81,16 @@ ChatPromptTemplate.from_template([
      """),
     ("human", "{question}")
 ])
+
+# %% Create a chain and invoke it
+chat_model = ChatGroq(
+    model="llama-3.1-8b-instant",
+)
+chain = prompt_template | chat_model | StrOutputParser()
+response = chain.invoke({
+    "context": context,
+    "question": question
+})
+print(response)
 
 # %%
