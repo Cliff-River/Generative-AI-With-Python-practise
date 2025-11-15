@@ -19,11 +19,12 @@ embeddings = OpenAIEmbeddings(
     openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 
+db_path = os.path.join(os.path.abspath(__file__), "..", "rag_store")
 # Check if rag_store directory exists
-if os.path.exists("rag_store"):
+if os.path.exists(db_path):
     print("Loading existing vector store...")
     vectorstore = Chroma(
-        persist_directory="rag_store",
+        persist_directory=db_path,
         embedding_function=embeddings
     )
     print("Vector store loaded successfully")
@@ -50,9 +51,17 @@ else:
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
-        persist_directory="rag_store"
+        persist_directory=db_path
     )
     vectorstore.persist()
     print("Vector store created and persisted")
 
-# %% The vector store is now ready for use in a RAG pipeline.
+# %% Use the vector store as retriever
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 3}
+)
+relevant_docs = retriever.get_relevant_documents("What happened in the first world war?")
+[doc.page_content[:100] for doc in relevant_docs]
+
+# %%
