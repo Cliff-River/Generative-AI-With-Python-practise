@@ -11,9 +11,9 @@ from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv, find_dotenv
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseRetriever
-from langchain_groq import ChatGroq
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
+from langchain_openai import ChatOpenAI
 
 load_dotenv(find_dotenv())
 
@@ -84,8 +84,10 @@ prompt_template = ChatPromptTemplate.from_messages([
 ])
 
 # %% Create a chain and invoke it
-chat_model = ChatGroq(
-    model="llama-3.1-8b-instant",
+chat_model = ChatOpenAI(
+    model="google/gemma-3-27b-it:free",
+    openai_api_base="https://openrouter.ai/api/v1",
+    openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 chain = prompt_template | chat_model | StrOutputParser()
 response = chain.invoke({
