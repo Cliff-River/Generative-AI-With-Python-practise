@@ -26,13 +26,35 @@ tokenized_corpus = [preprocess_text(doc) for doc in corpus]
 # %%
 bm25 = BM25Okapi(tokenized_corpus)
 
-# %%
+# %% Define function to calculate similarity scores
+def calculate_similarity_scores(user_query: str):
+    """
+    Calculate BM25 scores for a given user query using a pre-initialized BM25 object.
+    
+    Args:
+        user_query (str): The user's query string
+        
+    Returns:
+        dict: Dictionary containing tokenized queries and BM25 scores
+    """
+    tokenized_query_bm25 = user_query.lower().split()
+    tokenized_query_tfidf = ' '.join(tokenized_query_bm25)
+    bm25_scores = bm25.get_scores(tokenized_query_bm25)
+    
+    # Print results
+    print("BM25 Scores:", bm25_scores)
+    print("Tokenized Query (BM25):", tokenized_query_bm25)
+    print("Tokenized Query (TF-IDF string):", tokenized_query_tfidf)
+    
+    # Return results as a dictionary for potential further use
+    return {
+        "tokenized_query_bm25": tokenized_query_bm25,
+        "tokenized_query_tfidf": tokenized_query_tfidf,
+        "bm25_scores": bm25_scores
+    }
+
+# %% Example usage
 user_query = "What is the weather like in tropical regions?"
-tokenized_query_bm25 = user_query.lower().split()
-tokenized_query_tfidf = ' '.join(tokenized_query_bm25)
-bm25_scores = bm25.get_scores(tokenized_query_bm25)
-print("BM25 Scores:", bm25_scores)
-print("Tokenized Query (BM25):", tokenized_query_bm25)
-print("Tokenized Query (TF-IDF string):", tokenized_query_tfidf)
+results = calculate_similarity_scores(user_query)
 
 # %%
