@@ -24,3 +24,15 @@ corpus = [
 tokenized_corpus = [preprocess_text(doc) for doc in corpus]
 
 # %%
+bm25 = BM25Okapi(tokenized_corpus)
+
+# %%
+user_query = "What is the weather like in tropical regions?"
+tokenized_query_bm25 = user_query.lower().split()
+tokenized_query_tfidf = ' '.join(tokenized_query_bm25)
+bm25_scores = bm25.get_scores(tokenized_query_bm25)
+print("BM25 Scores:", bm25_scores)
+print("Tokenized Query (BM25):", tokenized_query_bm25)
+print("Tokenized Query (TF-IDF string):", tokenized_query_tfidf)
+
+# %%
