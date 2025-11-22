@@ -29,7 +29,7 @@ def preprocess_text(text: str) -> list[str]:
         return list(jieba.cut(text))
     else:
         # 使用字符级分词作为备选方案
-        return list(text)
+        return list[str](text)
 
 # %% 中文语料库
 corpus = [
@@ -54,11 +54,11 @@ else:
 bm25 = BM25Okapi(tokenized_corpus)
 # 配置TF-IDF向量器以适应中文文本
 if use_jieba:
-    # 如果使用jieba分词，使用词级别的向量化
-    tfidf_vectorizer = TfidfVectorizer(token_pattern=r'(?u)\\b\\w+\\b')
+    # 如果使用jieba分词，使用更适合中文的配置
+    tfidf_vectorizer = TfidfVectorizer(analyzer='word', token_pattern=r'(?u)\b\w+\b')
 else:
     # 否则使用字符级别的n-gram
-    tfidf_vectorizer = TfidfVectorizer(token_pattern=r'(?u)\\b\\w+\\b', analyzer='char_wb', ngram_range=(1, 2))
+    tfidf_vectorizer = TfidfVectorizer(analyzer='char_wb', ngram_range=(1, 2))
 
 # %% 定义相似度计算函数
 def calculate_similarity_scores(user_query: str):
@@ -76,15 +76,25 @@ def calculate_similarity_scores(user_query: str):
     bm25_scores = bm25.get_scores(tokenized_query_bm25)
 
     # TF-IDF处理
-    tfidf_matrix = tfidf_vectorizer.fit_transform(tokenized_corpus_tfidf)
-    tfidf_query_vector = tfidf_vectorizer.transform([user_query])
-    cosine_similarities = cosine_similarity(tfidf_query_vector, tfidf_matrix)
+    # 对查询进行与语料库相同的预处理
+    if use_jieba:
+        # 如果语料库使用了jieba分词，查询也需要分词并以空格分隔
+        tokenized_query_tfidf = ' '.join(preprocess_text(user_query))
+    else:
+        tokenized_query_tfidf = user_query
+    
+    # 只在第一次调用时拟合，之后直接转换
+    if not hasattr(calculate_similarity_scores, 'tfidf_matrix'):
+        calculate_similarity_scores.tfidf_matrix = tfidf_vectorizer.fit_transform(tokenized_corpus_tfidf)
+    
+    tfidf_query_vector = tfidf_vectorizer.transform([tokenized_query_tfidf])
+    cosine_similarities = cosine_similarity(tfidf_query_vector, calculate_similarity_scores.tfidf_matrix)
     tfidf_scores = cosine_similarities.tolist()[0]
     
     # 打印结果
     print("BM25 分数:", bm25_scores)
     print("分词后的查询 (BM25):", tokenized_query_bm25)
-    print("原始查询 (TF-IDF):", user_query)
+    print("处理后的查询 (TF-IDF):", tokenized_query_tfidf)
     print("TF-IDF 分数:", tfidf_scores)
     
     # 返回结果字典
@@ -137,3 +147,5 @@ print("\n示例查询 6:", user_query)
 results = calculate_similarity_scores(user_query)
 print("最相关的文档 (BM25):", corpus[np.argmax(results["bm25_scores"])])
 print("最相关的文档 (TF-IDF):", corpus[np.argmax(results["tfidf_scores"])])
+
+# %%
