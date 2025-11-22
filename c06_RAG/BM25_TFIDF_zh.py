@@ -7,6 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from rank_bm25 import BM25Okapi
 import jieba
 
+use_jieba = True
+
 # %% Function to preprocess Chinese text
 def preprocess_text(text: str) -> list[str]:
     """
