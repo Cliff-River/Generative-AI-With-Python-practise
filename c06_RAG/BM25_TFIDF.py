@@ -1,7 +1,5 @@
 # %% packages
 import string
-import numpy as np
-from tqdm import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from rank_bm25 import BM25Okapi
