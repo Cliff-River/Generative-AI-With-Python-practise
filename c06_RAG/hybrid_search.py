@@ -1,5 +1,7 @@
 # %% packages
 from langchain_openai import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.schema import Document
 import scipy as sp
 import os
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -53,11 +55,10 @@ selected_indices
 
 # %%
 embeddings = OpenAIEmbeddings(
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url="https://openrouter.ai/api/v1",
-    model="openrouter/auto"
+    openai_api_base="https://openrouter.ai/api/v1",
+    openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
-embedded_docs = [embeddings.embed_documents(doc) for doc in docs]
+embedded_docs = [embeddings.embed_query(doc) for doc in docs]
 query_dense_vec = embeddings.embed_query(user_query)
 
 # %% dense search
@@ -66,5 +67,30 @@ dense_similarities = cosine_similarity(
     embedded_docs
 )
 dense_similarities
+
+# %% Create Chroma vector database
+db_path = os.path.join(os.path.dirname(__file__), "hybrid_store")
+chroma_db = Chroma(
+    persist_directory=db_path,
+    embedding_function=OpenAIEmbeddings(
+        openai_api_key=os.getenv("OPENROUTER_API_KEY"),
+        base_url="https://openrouter.ai/api/v1",
+    ),
+    collection_name="hybrid_search_docs"
+)
+
+# %% Convert docs to Document objects and store in database
+if not os.path.exists(db_path):
+    documents = [Document(page_content=doc) for doc in docs]
+    chroma_db.add_documents(documents)
+    print("Documents added to vector database.")
+else:
+    print("Vector database already exists. Skipping document addition.")
+
+# %% Retrieve documents from database
+retrieved_docs = chroma_db.similarity_search(user_query, k=len(documents))
+print(f"Retrieved {len(retrieved_docs)} documents from vector database:")
+for i, doc in enumerate(retrieved_docs, 1):
+    print(f"{i}. {doc.page_content}")
 
 # %%
