@@ -70,7 +70,6 @@ if os.path.exists(db_path):
 else:
     chroma_db = Chroma.from_documents(
         persist_directory=db_path,
-        embedding_function=embeddings,
         documents=[Document(page_content=doc) for doc in docs],
         collection_name="hybrid_search_docs"
     )
