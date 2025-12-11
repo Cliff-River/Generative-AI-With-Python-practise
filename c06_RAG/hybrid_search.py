@@ -2,7 +2,6 @@
 from langchain_openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.schema import Document
-import scipy as sp
 import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -58,37 +57,28 @@ embeddings = OpenAIEmbeddings(
     openai_api_base="https://openrouter.ai/api/v1",
     openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
-embedded_docs = [embeddings.embed_query(doc) for doc in docs]
-query_dense_vec = embeddings.embed_query(user_query)
 
-# %% dense search
-dense_similarities = cosine_similarity(
-    [query_dense_vec], 
-    embedded_docs
-)
-dense_similarities
-
-# %% Create Chroma vector database
+# %% Create Chroma vector database if not exists
 db_path = os.path.join(os.path.dirname(__file__), "hybrid_store")
-chroma_db = Chroma(
-    persist_directory=db_path,
-    embedding_function=OpenAIEmbeddings(
-        openai_api_key=os.getenv("OPENROUTER_API_KEY"),
-        base_url="https://openrouter.ai/api/v1",
-    ),
-    collection_name="hybrid_search_docs"
-)
-
-# %% Convert docs to Document objects and store in database
-if not os.path.exists(db_path):
-    documents = [Document(page_content=doc) for doc in docs]
-    chroma_db.add_documents(documents)
-    print("Documents added to vector database.")
-else:
+if os.path.exists(db_path):
+    chroma_db = Chroma(
+        persist_directory=db_path,
+        embedding_function=embeddings,
+        collection_name="hybrid_search_docs"
+    )
     print("Vector database already exists. Skipping document addition.")
+else:
+    chroma_db = Chroma.from_documents(
+        persist_directory=db_path,
+        embedding_function=embeddings,
+        documents=[Document(page_content=doc) for doc in docs],
+        collection_name="hybrid_search_docs"
+    )
+    documents = [Document(page_content=doc) for doc in docs]
+    print("Documents added to vector database.")
 
 # %% Retrieve documents from database
-retrieved_docs = chroma_db.similarity_search(user_query, k=len(documents))
+retrieved_docs = chroma_db.similarity_search(user_query, k=len(docs))
 print(f"Retrieved {len(retrieved_docs)} documents from vector database:")
 for i, doc in enumerate(retrieved_docs, 1):
     print(f"{i}. {doc.page_content}")
