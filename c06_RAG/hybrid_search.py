@@ -71,9 +71,9 @@ else:
     chroma_db = Chroma.from_documents(
         persist_directory=db_path,
         documents=[Document(page_content=doc) for doc in docs],
+        embedding=embeddings,
         collection_name="hybrid_search_docs"
     )
-    documents = [Document(page_content=doc) for doc in docs]
     print("Documents added to vector database.")
 
 # %% Retrieve documents from database
