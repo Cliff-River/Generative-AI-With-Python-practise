@@ -70,16 +70,15 @@ if os.path.exists(db_path):
 else:
     chroma_db = Chroma.from_documents(
         persist_directory=db_path,
-        documents=[Document(page_content=doc) for doc in docs],
+        documents=[Document(page_content=doc, metadata={"index": i}) for i, doc in enumerate(docs)],
         embedding=embeddings,
         collection_name="hybrid_search_docs"
     )
     print("Documents added to vector database.")
 
-# %% Retrieve documents from database
-retrieved_docs = chroma_db.similarity_search(user_query, k=len(docs))
-print(f"Retrieved {len(retrieved_docs)} documents from vector database:")
-for i, doc in enumerate(retrieved_docs, 1):
-    print(f"{i}. {doc.page_content}")
+# %% Retrieve indices documents from database
+retrieved_docs = chroma_db.similarity_search(user_query, k=len(selected_indices_sparse))
+selected_indices_dense = [doc.metadata["index"] for doc in retrieved_docs]
+selected_indices_dense
 
 # %%
