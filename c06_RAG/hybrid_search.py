@@ -49,8 +49,8 @@ def get_filtered_indices(similarities, threshold=0.1):
     return [i for i, sim in indeces_and_values]
 
 # %%
-selected_indices = get_filtered_indices(sparse_search, threshold=0.1)
-selected_indices
+selected_indices_sparse = get_filtered_indices(sparse_search, threshold=0.1)
+selected_indices_sparse
 
 # %%
 embeddings = OpenAIEmbeddings(
