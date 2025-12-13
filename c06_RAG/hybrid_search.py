@@ -58,28 +58,8 @@ embeddings = OpenAIEmbeddings(
     openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 
-# %% Create Chroma vector database if not exists
-db_path = os.path.join(os.path.dirname(__file__), "hybrid_store")
-if os.path.exists(db_path):
-    chroma_db = Chroma(
-        persist_directory=db_path,
-        embedding_function=embeddings,
-        collection_name="hybrid_search_docs"
-    )
-    print("Vector database already exists. Skipping document addition.")
-else:
-    chroma_db = Chroma.from_documents(
-        persist_directory=db_path,
-        documents=[Document(page_content=doc, metadata={"index": i}) for i, doc in enumerate(docs)],
-        embedding=embeddings,
-        collection_name="hybrid_search_docs"
-    )
-    print("Documents added to vector database.")
+# %%
 
-# %% Retrieve indices documents from database
-retrieved_docs = chroma_db.similarity_search(user_query, k=len(selected_indices_sparse))
-selected_indices_dense = [doc.metadata["index"] for doc in retrieved_docs]
-selected_indices_dense
 
 # %% repiprocal rank
 def reciprocal_rank_fusion(indicies_sparse, indicies_dense, alpha=0.2):
