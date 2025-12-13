@@ -1,7 +1,5 @@
 # %% packages
 from langchain_openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.schema import Document
 import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -46,7 +44,7 @@ def get_filtered_indices(similarities, threshold=0.1):
         in enumerate(similarities) 
         if sim >= threshold
     ]
-    return [i for i, sim in indeces_and_values]
+    return [i for i, sim in sorted(indeces_and_values, key=lambda x: x[1], reverse=True)]
 
 # %%
 selected_indices_sparse = get_filtered_indices(sparse_search, threshold=0.1)
@@ -59,7 +57,20 @@ embeddings = OpenAIEmbeddings(
 )
 
 # %%
+embeddings = OpenAIEmbeddings(
+    openai_api_base="https://openrouter.ai/api/v1",
+    openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
+)
+embedded_docs = [embeddings.embed_query(doc) for doc in docs]
+query_dense_vec = embeddings.embed_query(user_query)
 
+# %% dense search
+dense_similarities = cosine_similarity(
+    [query_dense_vec], 
+    embedded_docs
+)
+selected_indices_dense = get_filtered_indices(dense_similarities[0], threshold=0.8)
+dense_similarities, selected_indices_dense
 
 # %% repiprocal rank
 def reciprocal_rank_fusion(indicies_sparse, indicies_dense, alpha=0.2):
