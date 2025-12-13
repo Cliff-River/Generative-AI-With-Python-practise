@@ -81,4 +81,21 @@ retrieved_docs = chroma_db.similarity_search(user_query, k=len(selected_indices_
 selected_indices_dense = [doc.metadata["index"] for doc in retrieved_docs]
 selected_indices_dense
 
+# %% repiprocal rank
+def reciprocal_rank_fusion(indicies_sparse, indicies_dense, alpha=0.2):
+    rank_dict = {}
+    
+    for rank, index in enumerate(indicies_sparse):
+        rank_dict[index] = rank_dict.get(index, 0) + alpha / (rank + 60)
+    
+    for rank, index in enumerate(indicies_dense):
+        rank_dict[index] += rank_dict.get(index, 0) + (1 - alpha) / (rank + 60)
+    
+    # Sort by combined score
+    sorted_indices = sorted(rank_dict.keys(), key=lambda x: rank_dict[x], reverse=True)
+    return sorted_indices
+
+# %% final hybrid search results
+reciprocal_rank_fusion(selected_indices_sparse, selected_indices_dense, alpha=0.3)
+
 # %%
