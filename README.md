@@ -47,7 +47,7 @@ Comprehensive RAG foundation with embeddings and vector databases:
 - `custom_chunking.py` - Custom chunking logic with utilities
 - `embeddings_util.py` - Shared embedding models
 
-**data_loder/** - Data ingestion (note: directory has typo)
+**data_loder/** - Data ingestion
 - `gutenberg_loader.py` - Project Gutenberg books
 - `wikipedia_loder.py` - Wikipedia articles
 - `txt_file.py` - Local text files
@@ -233,10 +233,12 @@ result = rag.query("Your question here")
 
 | Concept | Module | Examples |
 |---------|--------|----------|
-| **Pre-trained Models** | c02 | NER, QA, summarization, translation |
+| **Pre-trained Models** | c02 | NER, QA, summarization, translation, image/text generation |
+| **LLM Integration** | c03 | OpenAI, Groq, local models, multi-provider support |
 | **Model Chaining** | c03 | Sequential chains, routing, parallel processing |
-| **Prompt Techniques** | c04 | Few-shot, self-consistency, feedback loops |
+| **Prompt Techniques** | c04 | Few-shot, self-consistency, feedback loops, chaining |
 | **Vector Embeddings** | c05 | Word2Vec, sentence embeddings, semantic search |
+| **Chunking Strategies** | c05 | Fixed-size, semantic, structured document chunking |
 | **Retrieval Methods** | c06 | BM25, TF-IDF, hybrid search, RAG |
 
 ## 🔧 Development Workflow
@@ -279,19 +281,22 @@ result = rag.query("Your question here")
 ## 🎓 Learning Path
 
 **Beginner**:
-1. Start with c02 pre-trained models
-2. Try c03 simple chains
-3. Explore basic prompting in c04
+1. Start with c02 pre-trained models (text generation, classification)
+2. Try c03 simple chains and OpenAI integration
+3. Explore basic prompting techniques in c04
+4. Experiment with notebooks in c02 and c03
 
 **Intermediate**:
-1. Build RAG with c05 embeddings
-2. Implement hybrid search in c06
-3. Experiment with prompt chaining
+1. Build embeddings pipelines in c05
+2. Implement vector storage and retrieval
+3. Create RAG systems in c06
+4. Combine multiple LLMs with routing and parallel chains
 
 **Advanced**:
-1. Create custom tools and agents in miscellany
-2. Optimize vector retrieval performance
-3. Implement feedback loops and fine-tuning
+1. Implement custom chunking and semantic retrieval
+2. Build multi-stage RAG with query expansion
+3. Create custom tools and agents in miscellany
+4. Optimize performance with hybrid search methods
 
 ## 📝 VS Code Setup
 
@@ -337,5 +342,6 @@ For issues or questions:
 ---
 
 **Last Updated**: December 2025  
-**Python Version**: 3.11+  
-**Status**: Active Development
+**Python Version**: 3.11+ (3.13 recommended)  
+**Status**: Active Development  
+**Package Manager**: uv
