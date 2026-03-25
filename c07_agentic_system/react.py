@@ -31,3 +31,15 @@ latest_messages = get_latest_messages(memory, config)
 print(latest_messages)
 
 # %%
+agent_execute = agent_executer.invoke({"messages": [("user", "What can you find about me in the internet?")]}, config=config)
+latest_messages = get_latest_messages(memory, config)
+print(latest_messages)
+
+# %%
+list(memory.list(config=config))
+
+# %%
+latest_messages = get_latest_messages(memory, config)
+print(latest_messages)
+
+# %%
