@@ -29,3 +29,10 @@ graph = graph_builder.compile()
 display(Image(graph.get_graph().draw_mermaid_png()))
 
 # %%
+response = graph.invoke({ "messages": [{"role": "user", "content": "What do you know about LangGraph?"} ]})
+response["messages"][1].content
+
+# %%
+print(response["messages"][1].content)
+
+# %%
