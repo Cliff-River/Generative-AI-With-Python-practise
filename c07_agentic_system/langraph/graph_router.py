@@ -25,13 +25,13 @@ def node_router(state: State):
 def node_pro(state : State):
     topic = state["graph_state"]["topic"]
     response = llm.invoke(f"Generate arguments in favor of {topic}. Answer in bullet points. Max 5 words per bullet point.")
-    state["graph_state"]["result"] = { "side" : "pro", "argument": response }
+    state["graph_state"]["result"] = { "side" : "pro", "arguments": response }
     return { "graph_state": state["graph_state"] }
 
 def node_contra(state : State):
     topic = state["graph_state"]["topic"]
     response = llm.invoke(f"Generate arguments against {topic}. ")
-    state["graph_state"]["result"] = { "side" : "contra", "argument": response }
+    state["graph_state"]["result"] = { "side" : "contra", "arguments": response }
     return { "graph_state": state["graph_state"] }
 
 def edge_pro_or_contra(state: State):
@@ -49,8 +49,17 @@ builder.add_conditional_edges("node_router", edge_pro_or_contra)
 builder.add_edge("node_pro", END)
 builder.add_edge("node_contra", END)
 
-# %%
+# %% Build Graph
 graph = builder.compile()
 display(Image(graph.get_graph().draw_mermaid_png()))
+
+# %% Invocation
+initial_state = { "graph_state": {"topic": "College should be tuition-free for everyone."} }
+final_state = graph.invoke(initial_state)
+
+# %% Display Result
+console = Console()
+result = final_state["graph_state"]["result"]["arguments"].model_dump()["content"]
+console.print(Markdown(result))
 
 # %%
