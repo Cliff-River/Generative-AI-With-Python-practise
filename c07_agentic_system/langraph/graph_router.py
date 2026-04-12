@@ -2,6 +2,7 @@
 import random
 from IPython.display import Image, display
 from typing_extensions import TypedDict
+from typing import Literal
 from langgraph.graph import StateGraph, START, END
 from langchain_groq import ChatGroq
 from rich.markdown import Markdown
@@ -34,7 +35,7 @@ def node_contra(state : State):
     state["graph_state"]["result"] = { "side" : "contra", "arguments": response }
     return { "graph_state": state["graph_state"] }
 
-def edge_pro_or_contra(state: State):
+def edge_pro_or_contra(state: State) -> Literal["node_pro", "node_contra"]:
     decision = random.choice(["node_pro", "node_contra"])
     state["graph_state"]["decision"] = decision
     print("Routing to:", decision)
@@ -45,7 +46,14 @@ builder.add_node("node_router", node_router)
 builder.add_node("node_pro", node_pro)
 builder.add_node("node_contra", node_contra)
 builder.add_edge(START, "node_router")
-builder.add_conditional_edges("node_router", edge_pro_or_contra)
+builder.add_conditional_edges(
+    "node_router",
+    edge_pro_or_contra,
+    {
+        "node_pro": "node_pro",
+        "node_contra": "node_contra",
+    },
+)
 builder.add_edge("node_pro", END)
 builder.add_edge("node_contra", END)
 
