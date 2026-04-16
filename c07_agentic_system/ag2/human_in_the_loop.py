@@ -45,7 +45,7 @@ hangman_host = ConversableAgent(
     Say 'You win!' if you have found the secret word.
     """,
     human_input_mode="NEVER",
-    is_termination_msg=lambda msg: f"{secret_word}" in msg["content"]
+    is_termination_msg=lambda msg: f"{secret_word}" in msg["content"] or "You win!" in msg["content"] or "You lose!" in msg["content"]
 )
 
 # %% human player
