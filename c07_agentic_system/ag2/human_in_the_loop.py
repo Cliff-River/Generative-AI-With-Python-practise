@@ -26,6 +26,12 @@ secret_word = random.choice(word_list)
 number_of_charaters = len(secret_word)
 secret_word
 
+
+def is_game_over(msg: dict) -> bool:
+    content = str(msg.get("content", "")).lower()
+    print("msg:", msg)
+    return "you win" in content or "you lose" in content or secret_word.lower() in content
+
 # %% host agent
 hangman_host = ConversableAgent(
     "hangman_host",
@@ -45,7 +51,7 @@ hangman_host = ConversableAgent(
     Say 'You win!' if you have found the secret word.
     """,
     human_input_mode="NEVER",
-    is_termination_msg=lambda msg: f"{secret_word}" in msg["content"] or "You win!" in msg["content"] or "You lose!" in msg["content"]
+    is_termination_msg=is_game_over,
 )
 
 # %% human player
@@ -57,8 +63,9 @@ hangman_player = ConversableAgent(
     You select letters to narrow down the word. Only provide the letters as 'Guess: ...'.
     """,
     human_input_mode="ALWAYS",
+    is_termination_msg=is_game_over,
 )
-    
+
 # %%
 result = hangman_host.initiate_chat(
     hangman_player,
