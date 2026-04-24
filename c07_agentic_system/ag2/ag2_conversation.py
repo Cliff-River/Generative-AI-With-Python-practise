@@ -9,7 +9,7 @@ load_dotenv(find_dotenv())
 llm_config = {
     "config_list": [
         {
-            "model": "minimax/minimax-m2.5",
+            "model": "minimax/minimax-m2.5:free",
             "base_url": "https://openrouter.ai/api/v1",
             "api_key": os.environ.get("OPENROUTER_API_KEY"),
             "temperature": 0.9,
