@@ -1,29 +1,26 @@
 # %% packages
-import os
 import asyncio
-from agents import Agent, Runner
+from agents import Agent, Runner, set_default_openai_client 
 from dotenv import load_dotenv, find_dotenv
+from openai import AsyncOpenAI
+import os
 
 load_dotenv(find_dotenv())
 
-# Check if API key is loaded and configure OpenRouter
-openai_api_key = os.environ.get("OPENAI_API_KEY")
-openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+# 1. 创建 OpenRouter 客户端
+client = AsyncOpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
 
-print(f"OPENAI_API_KEY loaded: {bool(openai_api_key)}")
-print(f"OPENROUTER_API_KEY loaded: {bool(openrouter_api_key)}")
-
-# Prefer OpenRouter to avoid quota issues
-if openrouter_api_key:
-    os.environ["OPENAI_API_KEY"] = openrouter_api_key
-    os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
-    print("Using OpenRouter configuration")
+# 2. 设置为默认客户端
+set_default_openai_client(client)
 
 # %%
 agent = Agent(
     name="Simple Agent",
     instructions="You are a simple agent that answers questions about general knowledge. Provide concise and accurate answers.",
-    model="openai/gpt-4o-mini"
+    model="openrouter/openai/gpt-4o-mini"
 )
 
 # %%
