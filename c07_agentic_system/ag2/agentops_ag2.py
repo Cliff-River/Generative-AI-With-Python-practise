@@ -2,13 +2,26 @@
 import agentops
 from dotenv import load_dotenv, find_dotenv
 import os
-from agentops import track_agent, record_action, init as init_agentops
+from agentops import agent, task, trace
 import logging
 from openai import OpenAI
 
 load_dotenv(find_dotenv())
-init_agentops()
 logging.basicConfig(level=logging.DEBUG)
+
+# Initialize AgentOps with the v4 tracing API.
+try:
+    agentops.init(
+        api_key=os.environ.get("AGENTOPS_API_KEY"),
+        default_tags=["ag2-demo"],
+        instrument_llm_calls=False,
+        auto_start_session=True,
+        fail_safe=True,
+        log_level="ERROR",
+    )
+    logging.info("AgentOps initialized successfully")
+except Exception as e:
+    logging.error(f"AgentOps initialization error: {e}", exc_info=True)
 
 # %% config for OpenAI API
 openai_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ.get("OPENROUTER_API_KEY"))
@@ -26,11 +39,12 @@ llm_config = {
 }
 
 # %% Define the agent jack with agentops tracking
-@track_agent(name="jack")
+@agent(name="jack")
 class FlatEarthAgent:
+    @task(name="completion")
     def completion(self, prompt: str) -> str:
         response = openai_client.chat.completions.create(
-            model="minimax/minimax-m2.7",
+            model="openai/gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -47,11 +61,12 @@ class FlatEarthAgent:
         return response.choices[0].message.content
 
 # %% Define the agent alice with agentops tracking
-@track_agent(name="alice")
+@agent(name="alice")
 class ScientistAgent:
+    @task(name="completion")
     def completion(self, prompt: str) -> str:
         response = openai_client.chat.completions.create(
-            model="minimax/minimax-m2.7",
+            model="openai/gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -67,24 +82,32 @@ class ScientistAgent:
         return response.choices[0].message.content
 
 # %% Initiate the two agents
-jack = FlatEarthAgent()
-alice = ScientistAgent()
-
-flat_earth_arguement = jack.completion("Hello, how can you not see that the earth is flat?")
-
-# %%
-@record_action(event_name="argue_flat_earth")
-def argue_flat_earth():
+@task(name="argue_flat_earth")
+def argue_flat_earth(jack: FlatEarthAgent) -> str:
     return jack.completion("Hello, how can you not see that the earth is flat?")
 
-@record_action(event_name="respond_flat_earth")
-def respond_flat_earth():
-    return alice.completion(f"Respond to the argument that the earth is flat with convincing evidence: \n{flat_earth_arguement}")
 
-argue_flat_earth()
-respond_flat_earth()
+@task(name="respond_flat_earth")
+def respond_flat_earth(alice: ScientistAgent, flat_earth_arguement: str) -> str:
+    return alice.completion(
+        f"Respond to the argument that the earth is flat with convincing evidence: \n{flat_earth_arguement}"
+    )
 
-# %% End monitoring
-agentops.end_session("Success")
+
+@trace(name="ag2-demo")
+def run_demo():
+    jack = FlatEarthAgent()
+    alice = ScientistAgent()
+    flat_earth_arguement = argue_flat_earth(jack)
+    return respond_flat_earth(alice, flat_earth_arguement)
+
+
+try:
+    run_demo()
+    agentops.end_all_sessions()
+    logging.info("Demo completed successfully and all sessions ended")
+except Exception as e:
+    logging.error(f"Demo execution error: {e}", exc_info=True)
+    agentops.end_all_sessions()
 
 # %%
