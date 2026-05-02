@@ -1,0 +1,6 @@
+2026-05-02 20:41:28,801 - WARNING -  WARNING: agentops is out of date. Please update with the command: 'pip install --upgrade agentops'
+2026-05-02 20:41:30,759 - INFO - Session Replay: https://app.agentops.ai/drilldown?session_id=121e5f73-9bd8-429f-96b3-b1a597ab332e
+2026-05-02 20:42:12,127 - ERROR - Failed to send events: API server: - internal server error
+2026-05-02 20:42:41,184 - ERROR - Failed to send events: API server: - internal server error
+2026-05-02 20:42:42,600 - INFO - Session Stats - Duration: 1m 11.5s | Cost: $0.00 | LLMs: 3 | Tools: 0 | Actions: 2 | Errors: 0
+2026-05-02 20:42:42,601 - INFO - Session Replay: https://app.agentops.ai/drilldown?session_id=121e5f73-9bd8-429f-96b3-b1a597ab332e
